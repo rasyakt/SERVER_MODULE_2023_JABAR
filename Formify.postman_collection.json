@@ -1,0 +1,562 @@
+{
+	"info": {
+		"_postman_id": "8cf552a4-db0b-4eb4-b91c-b26a1de97e41",
+		"name": "Formify API - LKS Jabar 2023",
+		"description": "API collection for testing and validating the Formify Server Side Module.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return login success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Login success\");",
+									"});",
+									"",
+									"pm.test(\"Should return user detail and accessToken\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user).to.have.property(\"accessToken\");",
+									"    pm.expect(jsonData.user.email).to.eql(\"user1@webtech.id\");",
+									"    pm.collectionVariables.set(\"accessToken\", jsonData.user.accessToken);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user1@webtech.id\",\n    \"password\": \"password1\"\n}"
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/auth/login",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Log in with valid user credentials to obtain a bearer token from Laravel Sanctum."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return logout success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Logout success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/auth/logout",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Log out from the system and invalidate the Sanctum token."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Form",
+			"item": [
+				{
+					"name": "Create Form",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return create form success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Create form success\");",
+									"    pm.expect(jsonData.form).to.have.property(\"slug\");",
+									"    pm.expect(jsonData.form.name).to.eql(\"Stacks of Web Tech Members\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Stacks of Web Tech Members\",\n    \"slug\": \"member-stacks\",\n    \"allowed_domains\": [ \"webtech.id\" ],\n    \"description\": \"To collect all of favorite stacks\",\n    \"limit_one_response\": true\n}"
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms"
+							]
+						},
+						"description": "Create a new form with name, slug, allowed_domains, description, and limit_one_response setting."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Forms",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return get all forms success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Get all forms success\");",
+									"    pm.expect(jsonData.forms).to.be.an(\"array\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms"
+							]
+						},
+						"description": "Fetch all forms created by the currently authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail Form",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return get form success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Get form success\");",
+									"    pm.expect(jsonData.form).to.have.property(\"questions\");",
+									"    pm.expect(jsonData.form.slug).to.eql(\"biodata\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms/biodata",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms",
+								"biodata"
+							]
+						},
+						"description": "Retrieve full structure of a form by its unique slug, including its allowed domains and questions."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Question",
+			"item": [
+				{
+					"name": "Add a Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return add question success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Add question success\");",
+									"    pm.expect(jsonData.question).to.have.property(\"id\");",
+									"    pm.collectionVariables.set(\"lastQuestionId\", jsonData.question.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Most Favorite JS Framework\",\n    \"choice_type\": \"multiple choice\",\n    \"choices\": [\n        \"React JS\",\n        \"Vue JS\",\n        \"Angular JS\",\n        \"Svelte\"\n    ],\n    \"is_required\": true\n}"
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms/biodata/questions",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms",
+								"biodata",
+								"questions"
+							]
+						},
+						"description": "Add a new question definition to the specified form."
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a Question",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return remove question success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Remove question success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms/biodata/questions/{{lastQuestionId}}",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms",
+								"biodata",
+								"questions",
+								"{{lastQuestionId}}"
+							]
+						},
+						"description": "Delete a question from the specified form using its ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Response",
+			"item": [
+				{
+					"name": "Submit Response",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return submit response success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Submit response success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"answers\": [\n        {\n            \"question_id\": 1,\n            \"value\": \"Ica Amalia\"\n        },\n        {\n            \"question_id\": 2,\n            \"value\": \"Bandung\"\n        },\n        {\n            \"question_id\": 3,\n            \"value\": \"2006-08-01\"\n        },\n        {\n            \"question_id\": 4,\n            \"value\": \"Female\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms/biodata/responses",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms",
+								"biodata",
+								"responses"
+							]
+						},
+						"description": "Submit a form response containing a list of question answers."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Responses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return get responses success message\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Get responses success\");",
+									"    pm.expect(jsonData.responses).to.be.an(\"array\");",
+									"    pm.expect(jsonData.responses[0].answers).to.have.property(\"Name\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/forms/biodata/responses",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forms",
+								"biodata",
+								"responses"
+							]
+						},
+						"description": "Retrieve all responses submitted to the form, along with submitter details and key-value answer objects."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "lastQuestionId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
