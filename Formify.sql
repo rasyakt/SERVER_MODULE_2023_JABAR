@@ -32,9 +32,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 -- --------------------------------------------------------
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'User 1', 'user1@webtech.id', NULL, '$2y$12$Z0y2mFjK1W8tJ9m3PZGe4wN7/jNq6yGZtG06H9jV5R2O4L/V4yKyS', NULL, '2023-10-20 00:00:00', '2023-10-20 00:00:00'),
-(2, 'User 2', 'user2@webtech.id', NULL, '$2y$12$Uf6UaPZg5eWk8l6/w7beo9m1R5tKzN9l8G7t8m9z5yJk5o8o6vG2a', NULL, '2023-10-20 00:00:00', '2023-10-20 00:00:00'),
-(3, 'User 3', 'user3@worldskills.org', NULL, '$2y$12$R9nE.g5e9QyD/a7E2vB6o.w4H1QcZ5nS2O.G8w7M3r2o7p7yK8o6v', NULL, '2023-10-20 00:00:00', '2023-10-20 00:00:00');
+(1, 'User 1', 'user1@webtech.id', NULL, '$2y$12$AJYYop0qZ9/mdO3Dpb2Vn.2T.xdJRYm.vminZUzIE2J3G6gtyiprO', NULL, '2023-10-20 00:00:00', '2023-10-20 00:00:00'),
+(2, 'User 2', 'user2@webtech.id', NULL, '$2y$12$8MHvX4fnGEESXQ8GyCd0/uGkhXNc2H67wz54Dx897ztjOU4g4tfkC', NULL, '2023-10-20 00:00:00', '2023-10-20 00:00:00'),
+(3, 'User 3', 'user3@worldskills.org', NULL, '$2y$12$6/dod34UlyvAJnHPPiWzpujqudtzdQNo5SBoAPTVg.zcumoT6kbNW', NULL, '2023-10-20 00:00:00', '2023-10-20 00:00:00');
 
 -- --------------------------------------------------------
 -- Table structure for table `forms`
@@ -167,5 +167,25 @@ INSERT INTO `answers` (`id`, `response_id`, `question_id`, `value`, `created_at`
 (6, 2, 2, 'Bandung', '2022-10-24 02:03:27', '2022-10-24 02:03:27'),
 (7, 2, 3, '2006-08-01', '2022-10-24 02:03:27', '2022-10-24 02:03:27'),
 (8, 2, 4, 'Female', '2022-10-24 02:03:27', '2022-10-24 02:03:27');
+
+-- --------------------------------------------------------
+-- Table structure for table `personal_access_tokens`
+-- --------------------------------------------------------
+DROP TABLE IF EXISTS `personal_access_tokens`;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS=1;
